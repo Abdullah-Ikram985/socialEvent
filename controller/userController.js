@@ -18,13 +18,34 @@ exports.createUser = checkAsync(async (req, res, next) => {
   next();
 });
 
-exports.getAllUsers = async (req, res, next) => {
-  const users = await User.find();
+exports.continueWithEmail = checkAsync(async (req, res, next) => {
+  const { email } = req.body;
+  console.log('⭐');
+  console.log(req.body);
+  const user = await User.findOne({ email });
+  console.log('User', user);
+
+  if (!user) {
+    return res.status(401).json({
+      status: 'fail',
+      isSuccess: false,
+    });
+  }
+
   res.status(200).json({
     status: 'success',
-    results: users.length,
+    message: 'user exist',
+    isSuccess: true,
+  });
+});
+
+exports.getUser = checkAsync(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  console.log(user);
+  res.status(200).json({
+    status: 'success',
     data: {
-      users,
+      user,
     },
   });
-};
+});

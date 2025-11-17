@@ -11,7 +11,7 @@ const sendErrorDev = (err, req, res) => {
     });
   }
   // Render websites
-  console.log('💥💥💥', err);
+  console.log('💥 Development 💥', err);
   return res.status(err.statusCode).render('error', {
     title: 'Something went worng',
     message: err.message,
@@ -23,7 +23,7 @@ const sendErrorProd = (err, req, res) => {
   if (req.originalUrl.startsWith('/api')) {
     // OPERATIONA ERROR, TRUSTED ERROR : SEND MESSAGE TO THE CLIENT
     if (err.isOperational) {
-      console.log('💥💥💥', err);
+      console.log('💥 Operational 💥', err);
       return res.status(err.statusCode).json({
         status: err.status,
         message: err.message,
@@ -39,7 +39,7 @@ const sendErrorProd = (err, req, res) => {
   }
   // B) FOR RENDER WEBSITES
   if (err.isOperational) {
-    console.log('💥💥💥', err);
+    console.log('💥 Operational 💥', err);
     return res.status(err.statusCode).render('error', {
       status: err.status,
       message: err.message,
@@ -53,11 +53,21 @@ const sendErrorProd = (err, req, res) => {
   });
 };
 
+// const handleValidatorError = (err) => {
+//   console.log('⭐⭐⭐⭐', err);
+//   console.log('⭐⭐⭐⭐', err.errors[0]);
+//   // return new AppError();
+// };
+
 const handleCastErrorDB = (err) => {
-  console.log('💥💥💥💥');
-  const message = `Invalid ID ${err.value}`;
-  return new AppError(message, 404);
+  // Get the field name from the error object
+  const field = Object.keys(err.keyValue)[0];
+  const value = err.keyValue[field];
+  // Dynamic message
+  const message = `The ${field} "${value}" is already taken. Please use another one.`;
+  return new AppError(message, 400);
 };
+
 const handleJWTExpiredError = (err) =>
   new AppError('Invalid Token please login again!', 401);
 const JwtExpireErr = (err) =>
@@ -72,16 +82,15 @@ module.exports = (err, req, res, next) => {
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, req, res);
   } else if (process.env.NODE_ENV === 'production') {
-    // eslint-disable-next-line node/no-unsupported-features/es-syntax
     // let error = { ...err };
     let error = {
-      // eslint-disable-next-line node/no-unsupported-features/es-syntax
       ...err,
       message: err.message,
       name: err.name,
       stack: err.stack,
     };
     if (error.name === 'CastError') error = handleCastErrorDB(error);
+    if (error.name === 'ValidationError') error = handleValidatorError(error);
     if (error.code === 11000) error = handleCastErrorDB(error);
     if (error.name === 'JsonWebTokenError') error = handleJWTExpiredError();
     if (error.name === 'TokenExpiredError') error = JwtExpireErr();
