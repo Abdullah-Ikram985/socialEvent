@@ -3,6 +3,7 @@ const AppError = require('../utils/appError');
 const sendErrorDev = (err, req, res) => {
   // Api
   if (req.originalUrl.startsWith('/api')) {
+
     return res.status(err.statusCode).json({
       status: err.status,
       error: err,
@@ -11,11 +12,11 @@ const sendErrorDev = (err, req, res) => {
     });
   }
   // Render websites
-  console.log('💥 Development 💥', err);
-  return res.status(err.statusCode).render('error', {
-    title: 'Something went worng',
-    message: err.message,
-  });
+  // console.log('💥 Development 💥', err);
+  // return res.status(err.statusCode).render('error', {
+  //   title: 'Something went worng',
+  //   message: err.message,
+  // });
 };
 
 const sendErrorProd = (err, req, res) => {
@@ -38,13 +39,14 @@ const sendErrorProd = (err, req, res) => {
     });
   }
   // B) FOR RENDER WEBSITES
-  if (err.isOperational) {
-    console.log('💥 Operational 💥', err);
-    return res.status(err.statusCode).render('error', {
-      status: err.status,
-      message: err.message,
-    });
-  }
+  // if (err.isOperational) {
+  //   console.log('💥 Operational 💥', err);
+  //   return res.status(err.statusCode).render('error', {
+  //     status: err.status,
+  //     message: err.message,
+  //   });
+  // }
+
   // PROGRAMMING ERROR OR OTHER UNKNOWN ERROR: DO NOT LEAK ERROR DETAIL
   console.log('Error 💥', err);
   return res.status(500).render('error', {
