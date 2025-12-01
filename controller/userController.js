@@ -4,7 +4,6 @@ const User = require('../models/userModel');
 
 exports.createUser = checkAsync(async (req, res, next) => {
   const user = await User.create(req.body);
-
   console.log('User', user);
   res.status(201).json({
     status: 'success',
