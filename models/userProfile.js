@@ -7,8 +7,7 @@ const userProfileSchema = new mongoose.Schema({
     require: [true, 'Must add description'],
   },
   categories: {
-    type: [String],
-    required: true,
+    type: [String]
   },
 });
 
