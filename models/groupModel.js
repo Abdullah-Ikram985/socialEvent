@@ -1,17 +1,35 @@
-const { default: mongoose } = require('mongoose');
-const monngoose = require('mongoose');
+const mongoose = require('mongoose');
+const validator = require('validator');
 
-const groupSchema = new monngoose.Schema({
+const groupSchema = new mongoose.Schema({
+  // photo: String,
   name: {
     type: String,
+    required: [true, 'Group must have a name!'],
   },
-  locations: {
+  description: {
+    type: [String],
+  },
+  categories: {
+    type: [String],
+  },
+
+  location: {
     type: {
       type: String,
       default: 'Point',
       enum: ['Point'],
     },
-    coordinates: [Number],
+    coordinates: {
+      type: [Number],
+      required: true,
+      validate: {
+        validator: function (val) {
+          return val.length === 2;
+        },
+        message: 'Coordinates must be [longitude, latitude]',
+      },
+    },
     address: String,
     description: String,
   },

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
-
+const Profile = require('./avatarModel');
 const userSchema = new mongoose.Schema({
   firstName: {
     type: String,
@@ -74,18 +74,16 @@ const userSchema = new mongoose.Schema({
     type: Date,
     select: false,
   },
+
   userProfile: {
     type: mongoose.Schema.ObjectId,
     ref: 'Profile',
   },
+
   __v: {
     type: Number,
     select: false,
   },
-});
-userSchema.pre(/^find/, function (next) {
-  this.populate('userProfile');
-  next();
 });
 
 userSchema.pre('save', async function (next) {

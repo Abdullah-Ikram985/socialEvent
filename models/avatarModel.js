@@ -1,14 +1,12 @@
 const mongoose = require('mongoose');
 
 const userProfileSchema = new mongoose.Schema({
-  photo: String,
+  avatar: String,
   description: {
     type: String,
-    require: [true, 'Must add description'],
   },
   categories: {
     type: [String],
-    required: true,
   },
 });
 

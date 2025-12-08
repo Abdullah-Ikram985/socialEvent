@@ -1,17 +1,15 @@
 const mongoose = require('mongoose');
 const express = require('express');
 const authController = require('../controller/authController');
-const userProfileController = require('../controller/userProfileController');
+const userProfileController = require('../controller/userAvatarController');
 
 const router = express.Router();
 
 router.post(
-  '/user_profile',
+  '/userAvatar',
   authController.protect,
   userProfileController.uploadUserProfile,
-  userProfileController.resizeUserPhoto,
-  userProfileController.storeImageOnCloudnary,
-  userProfileController.userProfile
+  userProfileController.storeImageOnCloudnary
 );
 
 module.exports = router;
