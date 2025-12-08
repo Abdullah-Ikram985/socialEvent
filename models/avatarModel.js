@@ -6,7 +6,11 @@ const userProfileSchema = new mongoose.Schema({
     type: String,
   },
   categories: {
+<<<<<<< HEAD:models/avatarModel.js
     type: [String],
+=======
+    type: [String]
+>>>>>>> 21b129e7ecb69c414e45c16e84e05856a2a96aa2:models/userProfile.js
   },
 });
 
