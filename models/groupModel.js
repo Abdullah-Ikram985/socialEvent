@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 
 const groupSchema = new mongoose.Schema({
-  // photo: String,
+  photo: String,
   name: {
     type: String,
-    required: [true, 'Group must have a name!'],
+    // required: [true, 'Group must have a name!'],
   },
   description: {
     type: [String],
@@ -14,13 +14,17 @@ const groupSchema = new mongoose.Schema({
     type: [String],
   },
 
-  location: {
-    type: {
-      type: String,
-      default: 'Point',
-      enum: ['Point'],
-    },
-    coordinates: {
+  // location: {
+  //   type: {
+  //     type: String,
+  //     default: 'Point',
+  //     enum: ['Point'],
+  //   },
+    
+  //   address: String,
+  //   description: String,
+  // },
+  coordinates: {
       type: [Number],
       required: true,
       validate: {
@@ -30,9 +34,6 @@ const groupSchema = new mongoose.Schema({
         message: 'Coordinates must be [longitude, latitude]',
       },
     },
-    address: String,
-    description: String,
-  },
 });
 
 const Group = mongoose.model('Group', groupSchema);
