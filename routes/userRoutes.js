@@ -10,27 +10,30 @@ router.post('/signup', authController.signup);
 router.post('/login', authController.login);
 router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
-
 router.patch(
   '/updateMyPassword',
   authController.protect,
   authController.updatePassword
 );
-
+// CREATE NEW USER
 router.post('/create', userController.createUser);
-
+// UPDATE CURRENT LOGIN USER (BASED ON TOKEN)
 router.post(
   '/updateUser',
   authController.protect,
   userController.updateCurrentUser
 );
+
 router.post('/checkEmail', userController.getUserBasedOnEmail);
+
+// GET CURRENT LOGIN USER (BASED ON TOKEN)
 router.get(
-  '/getUser/:id',
+  '/getUser',
   authController.protect,
-  userController.getUserBasedOnID
+  userController.getUserBasedOnToken
 );
 
+// DELETE CURRENT LOGIN USER (BASED ON TOKEN)
 router.delete(
   '/deleteUserAccount',
   authController.protect,

@@ -3,7 +3,6 @@ const AppError = require('../utils/appError');
 const sendErrorDev = (err, req, res) => {
   // Api
   if (req.originalUrl.startsWith('/api')) {
-
     return res.status(err.statusCode).json({
       status: err.status,
       error: err,
@@ -11,12 +10,6 @@ const sendErrorDev = (err, req, res) => {
       stack: err.stack,
     });
   }
-  // Render websites
-  // console.log('💥 Development 💥', err);
-  // return res.status(err.statusCode).render('error', {
-  //   title: 'Something went worng',
-  //   message: err.message,
-  // });
 };
 
 const sendErrorProd = (err, req, res) => {
@@ -38,14 +31,7 @@ const sendErrorProd = (err, req, res) => {
       message: 'Something went very wrong',
     });
   }
-  // B) FOR RENDER WEBSITES
-  // if (err.isOperational) {
-  //   console.log('💥 Operational 💥', err);
-  //   return res.status(err.statusCode).render('error', {
-  //     status: err.status,
-  //     message: err.message,
-  //   });
-  // }
+ 
 
   // PROGRAMMING ERROR OR OTHER UNKNOWN ERROR: DO NOT LEAK ERROR DETAIL
   console.log('Error 💥', err);
@@ -54,12 +40,6 @@ const sendErrorProd = (err, req, res) => {
     message: 'Please try again later!',
   });
 };
-
-// const handleValidatorError = (err) => {
-//   console.log('⭐⭐⭐⭐', err);
-//   console.log('⭐⭐⭐⭐', err.errors[0]);
-//   // return new AppError();
-// };
 
 const handleCastErrorDB = (err) => {
   // Get the field name from the error object
@@ -75,6 +55,8 @@ const handleJWTExpiredError = (err) =>
 const JwtExpireErr = (err) =>
   new AppError('Your token expired Please login again!', 401);
 
+
+
 module.exports = (err, req, res, next) => {
   console.log(err);
   console.log(err.stack);
@@ -83,6 +65,7 @@ module.exports = (err, req, res, next) => {
 
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, req, res);
+
   } else if (process.env.NODE_ENV === 'production') {
     // let error = { ...err };
     let error = {
