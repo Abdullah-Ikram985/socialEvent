@@ -20,7 +20,7 @@ exports.loginWithGoogle = async (req, res) => {
     const email = payload.email;
     const firstName = payload.given_name;
     const lastName = payload.family_name;
-    const photo = payload.picture;
+    // const photo = payload.picture;
 
     let user = await User.findOne({ googleId });
 
@@ -30,7 +30,7 @@ exports.loginWithGoogle = async (req, res) => {
         email,
         firstName,
         lastName,
-        photo,
+        // photo,
         provider: 'google',
       });
     }

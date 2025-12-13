@@ -1,8 +1,8 @@
 const AppError = require('../utils/appError');
 const checkAsync = require('../utils/checkAsync');
 const User = require('../models/userModel');
-const Profile = require('../models/avatarModel');
-const { userProfile } = require('./userAvatarController');
+// const Profile = require('../models/avatarModel');
+// const { userProfile } = require('./userAvatarController');
 
 exports.createUser = checkAsync(async (req, res, next) => {
   const user = await User.create(req.body);
@@ -18,11 +18,11 @@ exports.createUser = checkAsync(async (req, res, next) => {
   next();
 });
 
-exports.updateCurrentUser = checkAsync(async (req, res, next) => {
-  // console.log('User ⭐', req.user);
+// UPDATING USER
 
-  if (!req.body.description || !req.body.avatar)
-    return next(new AppError('Must add description and avatar'));
+exports.updateCurrentUser = checkAsync(async (req, res, next) => {
+  if (!req.body.description) return next(new AppError('Must add description'));
+  if (!req.body.image) return next(new AppError('Must add image'));
 
   if (typeof req.body.categories === 'string') {
     try {
@@ -32,18 +32,18 @@ exports.updateCurrentUser = checkAsync(async (req, res, next) => {
     }
   }
 
-  const profile = await Profile.create({
-    avatar: req.body.avatar,
-    description: req.body.description,
-    categories: req.body.categories,
-  });
-
-  const updatedUser = await User.findByIdAndUpdate(req.user.id, {
-    userProfile: profile._id,
-  }).populate('userProfile');
-
-  console.log('PROFILE  ', req.body);
-  console.log('Updated User = == >', updatedUser);
+  const updatedUser = await User.findByIdAndUpdate(
+    req.user.id,
+    {
+      image: req.body.image,
+      description: req.body.description,
+      categories: req.body.categories,
+    },
+    {
+      new: true,
+    }
+  );
+  console.log('Updating User  ===>', updatedUser);
 
   res.status(200).json({
     status: 'success',
@@ -54,6 +54,7 @@ exports.updateCurrentUser = checkAsync(async (req, res, next) => {
   });
 });
 
+// GET USER BASED ON EMAIL
 exports.getUserBasedOnEmail = checkAsync(async (req, res, next) => {
   const { email } = req.body;
   const user = await User.findOne({ email });
@@ -73,11 +74,10 @@ exports.getUserBasedOnEmail = checkAsync(async (req, res, next) => {
   });
 });
 
-exports.getUserBasedOnID = checkAsync(async (req, res, next) => {
-  const user = await User.findById(req.params.id);
-  if (!user) next(new AppError('No user found with this ID.', 404));
-  console.log('Get User ⭐', user);
-
+// GET CURRENT USER (BASED ON TOKEN)
+exports.getUserBasedOnToken = checkAsync(async (req, res, next) => {
+  const user = req.user;
+  console.log('Get User Baed on ', user);
   res.status(200).json({
     status: 'success',
     data: {
@@ -86,11 +86,9 @@ exports.getUserBasedOnID = checkAsync(async (req, res, next) => {
   });
 });
 
-// Delete Current  User
-
+// DELETE CURRENT USER (BASED ON TOKEN)
 exports.deleteCurrentUser = checkAsync(async (req, res, next) => {
   if (!req.user) return next(new AppError('User Dos not exist.', 404));
-
   const delete_Current_User = await User.findByIdAndDelete(req.user.id);
   res.status(204).json({
     status: 'success',

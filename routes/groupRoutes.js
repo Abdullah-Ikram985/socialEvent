@@ -1,15 +1,13 @@
 const express = require('express');
 const authController = require('../controller/authController');
 const groupController = require('../controller/groupController');
-const avatarControler = require('../controller/userAvatarController');
+const avatarControler = require('../controller/singleImgController');
 
 const router = express.Router();
 
 router.post(
   '/create_group',
   authController.protect,
-  avatarControler.uploadUserProfile,
-  avatarControler.storeImageOnCloudnary,
   groupController.createGroup
 );
 
@@ -19,4 +17,5 @@ router.get(
   groupController.getGroupById
 );
 
+router.get('/all_groups', authController.protect, groupController.getAllGroups);
 module.exports = router;

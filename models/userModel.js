@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
-const Profile = require('./avatarModel');
 const userSchema = new mongoose.Schema({
   firstName: {
     type: String,
@@ -55,7 +54,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     sparse: true,
   },
-  photo: String,
+
   provider: {
     type: String,
     enum: ['local', 'google'],
@@ -74,12 +73,11 @@ const userSchema = new mongoose.Schema({
     type: Date,
     select: false,
   },
-
-  userProfile: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'Profile',
+  image: String,
+  description: String,
+  categories: {
+    type: [String],
   },
-
   __v: {
     type: Number,
     select: false,
@@ -122,7 +120,7 @@ userSchema.methods.changePasswordAfter = function (JwtIssuesTime) {
   return false;
 };
 
-// Password Reste Token
+// PASSWORD RESET TOKEN
 userSchema.methods.createPasswordResetToken = function () {
   const userToken = crypto.randomBytes(32).toString('hex');
 
@@ -130,11 +128,11 @@ userSchema.methods.createPasswordResetToken = function () {
     .createHash('sha256')
     .update(userToken)
     .digest('hex');
-  // this.passwordResetExpires = Date.now() + (10 * 60) / 1000;
-  this.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000; // TOKEN WILL BE EXPIRED AFTER 10 minutes
 
   return userToken;
 };
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;
+
