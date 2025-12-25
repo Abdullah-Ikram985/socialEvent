@@ -25,7 +25,8 @@ router.post(
 );
 
 router.post('/checkEmail', userController.getUserBasedOnEmail);
-
+// GET ALL USERS
+router.get('/allUsers', authController.protect, userController.getAllUsers);
 // GET CURRENT LOGIN USER (BASED ON TOKEN)
 router.get(
   '/getUser',

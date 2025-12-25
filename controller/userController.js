@@ -19,7 +19,6 @@ exports.createUser = checkAsync(async (req, res, next) => {
 });
 
 // UPDATING USER
-
 exports.updateCurrentUser = checkAsync(async (req, res, next) => {
   if (!req.body.description) return next(new AppError('Must add description'));
   if (!req.body.image) return next(new AppError('Must add image'));
@@ -31,7 +30,6 @@ exports.updateCurrentUser = checkAsync(async (req, res, next) => {
       return next(new AppError(err.message, 404));
     }
   }
-
   const updatedUser = await User.findByIdAndUpdate(
     req.user.id,
     {
@@ -74,10 +72,21 @@ exports.getUserBasedOnEmail = checkAsync(async (req, res, next) => {
   });
 });
 
+// GET ALL USERS
+exports.getAllUsers = checkAsync(async (req, res, next) => {
+  const users = await User.find();
+  res.status(200).json({
+    ststus: 'success',
+    results: users.length,
+    data: {
+      users,
+    },
+  });
+});
 // GET CURRENT USER (BASED ON TOKEN)
 exports.getUserBasedOnToken = checkAsync(async (req, res, next) => {
   const user = req.user;
-  console.log('Get User Baed on ', user);
+  console.log('Current User ==> ', user);
   res.status(200).json({
     status: 'success',
     data: {
