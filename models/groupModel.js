@@ -34,19 +34,34 @@ const groupSchema = new mongoose.Schema({
       required: true,
     },
   },
+  groupMembers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      unique: [true, 'User Already added in group!'],
+    },
+  ],
+
   createdAt: {
     type: Date,
-    default: () => new Date(),
+    default: () => Date.now(),
   },
 
   expireIN: {
     type: Date,
-    default: Date.now() + 10 + 60 / 1000,
-    index: { expires: '1m' },
+    validate: {
+      validator: function (date) {
+        console.log('Validateioscbkscbjsdcisvcdibd', date);
+        return date > Date.now();
+      },
+      message: 'Expiration date must be in furture!',
+    },
   },
   slug: String,
 });
-// groupSchema.createIndex({ createdAt: Date.now() }, { expireAfterSeconds: 10 });
+
+groupSchema.index({ expireIN: 1 }, { expireAfterSeconds: 0 });
+
 groupSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();

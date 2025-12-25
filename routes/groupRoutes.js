@@ -11,6 +11,8 @@ router.post(
   groupController.createGroup
 );
 
+router.patch('/update_group/:id', groupController.updateGroup);
+
 router.get(
   '/get_group/:id',
   authController.protect,
