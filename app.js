@@ -27,6 +27,8 @@ app.get("/apple-app-site-association", (req, res) => {
   res.sendFile(path.join(__dirname, "apple-app-site-association"));
 });
 
+app.use(express.static(path.join(__dirname, "public")));
+
 // API ROUTES
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/auth", authRouter);
