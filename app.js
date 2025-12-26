@@ -36,6 +36,22 @@ app.use("/api/v1/img", profileRouter);
 app.use("/api/v1/group", groupRouter);
 app.use("/api/v1/invitation", inviteUser);
 
+app.get("/group/:groupId", (req, res) => {
+  const userAgent = req.headers["user-agent"];
+  const appStoreUrl = "https://apps.apple.com/app/id6756718235"; // your Apple App Store ID
+
+  // iOS device → redirect to App Store if app not installed
+  if (/iPhone|iPad|iPod/i.test(userAgent)) {
+    return res.redirect(appStoreUrl);
+  }
+
+  // Android / web fallback
+  res.send(
+    `<h1>Open this link on your mobile device</h1>
+     <a href="${appStoreUrl}">Download App</a>`
+  );
+});
+
 app.get("/favicon.ico", (req, res) => res.status(204).end());
 
 app.all("*", (req, res, next) => {
