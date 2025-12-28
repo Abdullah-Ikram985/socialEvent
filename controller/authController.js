@@ -4,7 +4,9 @@ const crypto = require('crypto');
 const checkAsync = require('../utils/checkAsync');
 const AppError = require('../utils/appError');
 const User = require('../models/userModel');
+const InvitationModel = require('../models/groupInvitationModel');
 const sendEmail = require('../utils/email');
+
 const siginToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.EXPIRE_IN,
@@ -12,21 +14,6 @@ const siginToken = (id) =>
 
 const createSendToken = (user, statusCode, res) => {
   const token = siginToken(user.id);
-  /*
-     TOKEN FOR COOKIES
-  const cookiesOptions = {
-    expires: new Date(
-      Date.now() +
-        Number(process.env.JWT_COOKIE_EXPIRE_IN) * 24 * 60 * 60 * 1000
-    ),
-    httpOnly: true,
-  };
-  
-  if (process.env.NODE_ENV === 'production') cookiesOptions.secure = true;
-  res.cookie('jwt', token, cookiesOptions);
-  user.password = undefined;
-*/
-
   res.status(statusCode).json({
     status: 'success',
     token,
@@ -44,7 +31,6 @@ exports.signup = checkAsync(async (req, res, next) => {
 // ======== Login =======
 
 exports.login = checkAsync(async (req, res, next) => {
-  
   const { email, password } = req.body;
 
   const user = await User.findOne({ email: email }).select('+password');
@@ -221,3 +207,44 @@ exports.updatePassword = checkAsync(async (req, res, next) => {
 //     message: 'Successfully Logout!',
 //   });
 // });
+
+/////////////////////////////////////////////////////////////////
+//----------------  INVITATION MODEL  PROTECT ------------------
+///////////////////////////////////////////////////////////////
+
+exports.protectInvitation = checkAsync(async (req, res, next) => {
+  let invitationToken;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    invitationToken = req.headers.authorization.split(' ')[1];
+  }
+  if (!invitationToken) {
+    return next(
+      new AppError('You are not invited', 401)
+    );
+  }
+
+  console.log('TOKEN===>', invitationToken);
+
+  // VERIFICATION TOKEN
+  const decode = await promisify(jwt.verify)(
+    invitationToken,
+    process.env.JWT_SECRET
+  );
+
+  // CHECK IF INVITATION STILL EXSIST
+  const invitation = await InvitationModel.findById(decode.id);
+  if (!invitation) {
+    return next(
+      new AppError(
+        'Invitation belong this invitationToken does no longer exsist!',
+        401
+      )
+    );
+  }
+  req.invitation = invitation;
+
+  next();
+});
