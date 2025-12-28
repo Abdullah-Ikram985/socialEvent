@@ -12,14 +12,16 @@ const groupInvitationSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   },
+  status: {
+    type: String,
+    default: 'pending',
+    enum: ['pending', 'accepting', 'rejecting'],
+  },
 });
-
-
 
 const InvitationModel = mongoose.model(
   'InvitationModel',
   groupInvitationSchema
 );
-
 
 module.exports = InvitationModel;
