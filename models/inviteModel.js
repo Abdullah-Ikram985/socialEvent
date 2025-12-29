@@ -15,13 +15,12 @@ const inviteSchema = new mongoose.Schema({
   inviteStatus: {
     type: String,
     default: 'pending',
-    // enum: ['pending', 'accepting', 'rejecting'],
 
     enum: {
       values: ['pending', 'accepting', 'rejecting'],
       message: '{VALUE} is not a valid invite status!.',
     },
-    // required: [true, 'User role is required'],
+ 
   },
   expiresIn: {
     type: Date,
