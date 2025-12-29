@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const checkAsync = require('../utils/checkAsync');
 const AppError = require('../utils/appError');
 const User = require('../models/userModel');
-const InvitationModel = require('../models/groupInvitationModel');
+const InvitationModel = require('../models/inviteModel');
 const sendEmail = require('../utils/email');
 
 const siginToken = (id) =>
@@ -221,9 +221,7 @@ exports.protectInvitation = checkAsync(async (req, res, next) => {
     invitationToken = req.headers.authorization.split(' ')[1];
   }
   if (!invitationToken) {
-    return next(
-      new AppError('You are not invited', 401)
-    );
+    return next(new AppError('You are not invited', 401));
   }
 
   console.log('TOKEN===>', invitationToken);

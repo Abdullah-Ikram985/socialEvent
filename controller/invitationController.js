@@ -1,95 +1,132 @@
 const jwt = require('jsonwebtoken');
 const checkAsync = require('../utils/checkAsync');
 const AppError = require('../utils/appError');
-const InvitationModel = require('../models/groupInvitationModel');
+const InviteMode = require('../models/inviteModel');
 const Group = require('../models/groupModel');
-
-//  const invitation = await InvitationModel.create(req.body);
-//   const group = await Group.findById(req.body.groupId);
-//   // console.log('Group ', group);
-//   if (!group) return next(new AppError('No Group found with this ID!', 404));
-//   group.groupMembers.push(req.body.userId);
-//   console.log('Group Members =>', group.groupMembers);
-//   await group.save();
-
-// 1) Pending   2) Accepting  3) Rejecting
-
-const inviToken = (id) =>
-  jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.EXPIRE_IN,
-  });
-
-const createAndSendToken = (invitation, statusCode, res) => {
-  const invitationToken = inviToken(invitation.id);
-  console.log('Create and send Invitation Toiken =>', invitationToken);
-
-  res.status(statusCode).json({
-    status: 'success',
-    invitationToken,
-    invitation,
-  });
-};
 
 // SEND INVITATION
 exports.send_invitation = checkAsync(async (req, res, next) => {
   if (!req.body.groupId) return next(new AppError('Group ID is  required!'));
   if (!req.body.userId) return next(new AppError('User ID is  required!'));
 
-  const invitation = await InvitationModel.create({
+  const inviteExpire = 5;
+
+  const invitation = await InviteMode.create({
     groupId: req.body.groupId,
     userId: req.body.userId,
+    expiresIn: new Date(Date.now() + inviteExpire * 24 * 60 * 60 * 1000),
   });
 
-  createAndSendToken(invitation, 201, res);
+  res.status(201).json({
+    status: 'success',
+    data: {
+      invitation,
+    },
+  });
 });
 
 exports.invite_accept_or_reject = checkAsync(async (req, res, next) => {
-  // console.log('Invitation ID: ',);
-  console.log('INVITATION ====> ', req.invitation);
+  if (!req.body.inviteStatus)
+    return next(new AppError('Invitation Status required!', 401));
 
-  if (req.body.status === 'accept') {
-    const group = await Group.findById(req.invitation.groupId);
-    group.groupMembers.push(req.invitation.userId);
+  const invitation = await InviteMode.findById(req.params.id)
+    .populate('userId', 'firstName lastName email description')
+    .populate('groupId', 'name coordinates description');
+  if (!invitation)
+    return next(new AppError('Invitation belong this Id does not found!', 404));
+
+  console.log('INVITATION ==> ', invitation);
+  console.log('Body  ==> ', req.body.status);
+
+  if (req.body.status === 'accepting') {
+    console.log(invitation);
+    const group = await Group.findById(invitation.groupId);
+    console.log('Group ==>', group);
+    group.groupMembers.push(invitation.userId);
     group.save();
     console.log('⭐⭐ Group ⭐⭐', group);
-    const invitation = await InvitationModel.findByIdAndUpdate(
-      req.invitation._id,
-      {
-        status: 'accept',
-      },
-      {
-        new: true,
-      }
-    );
+
+    invitation.status = 'accepting';
+    await invitation.save();
 
     return res.status(200).json({
       status: 'success',
       data: invitation,
     });
   }
-});
+  if (req.body.status === 'rejecting') {
+    const invitation = await InviteMode.findByIdAndUpdate(
+      req.params.id,
+      {
+        status: 'rejecting',
+      },
+      { new: true }
+    );
+    await invitation.save();
+    console.log('INVITATION REJECTING  ===>  ', invitation);
+    return res.status(204).json({
+      status: 'success',
+      data: {
+        invitation,
+      },
+    });
+  }
 
-exports.checkInvitation = checkAsync(async (req, res, next) => {
-  console.log('Invitation ====>', req.invitation);
-  // const invi = await InvitationModel.findOne({
-  //   userId: req.params.id,
-  // });
-  // const filter = {
-  //   userId: req.params.id,
-  // };
-  // const invita = await InvitationModel.find(filter);
-  // console.log('Users All Invitation ', invita);
-  // console.log('Invitation User ', invi);
-  // console.log('Invitation ID:  ', invi.id);
-
-  const invitation = await InvitationModel.findById(req.invitation.id)
-    .populate('userId', 'firstName lastName email description')
-    .populate('groupId', 'name coordinates description');
+  const invite = await InviteMode.findByIdAndUpdate(
+    req.params.id,
+    {
+      inviteStatus: req.body.inviteStatus,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
 
   res.status(200).json({
-    ststus: 'success',
+    status: 'success',
+    invite,
+  });
+});
+
+exports.get_invite_based_user_id = checkAsync(async (req, res, next) => {
+  // console.log('Get Invitation Id ==>', req.params.id);
+
+  const invitation = await InviteMode.find({ userId: req.params.id });
+  if (!invitation)
+    return next(new AppError('Invitation belong this Id does not found!', 404));
+
+  // console.log(invitation);
+  res.status(200).json({
+    status: 'success',
     data: {
       invitation,
     },
   });
 });
+
+// exports.checkInvitation = checkAsync(async (req, res, next) => {
+//   console.log('Invitation ====>', req.invitation);
+//   // const invi = await inviteModel.findOne({
+//   //   userId: req.params.id,
+//   // });
+//   // const filter = {
+//   //   userId: req.params.id,
+//   // };
+//   // const invita = await inviteModel.find(filter);
+//   // console.log('Users All Invitation ', invita);
+//   // console.log('Invitation User ', invi);
+//   // console.log('Invitation ID:  ', invi.id);
+
+//   const invitation = await inviteModel
+//     .findById(req.invitation.id)
+//     .populate('userId', 'firstName lastName email description')
+//     .populate('groupId', 'name coordinates description');
+
+//   res.status(200).json({
+//     ststus: 'success',
+//     data: {
+//       invitation,
+//     },
+//   });
+// });
