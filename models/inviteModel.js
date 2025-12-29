@@ -1,0 +1,35 @@
+const mongoose = require('mongoose');
+
+const inviteSchema = new mongoose.Schema({
+  groupName: {
+    type: String,
+  },
+  groupId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Group',
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  inviteStatus: {
+    type: String,
+    default: 'pending',
+    // enum: ['pending', 'accepting', 'rejecting'],
+
+    enum: {
+      values: ['pending', 'accepting', 'rejecting'],
+      message: '{VALUE} is not a valid invite status!.',
+    },
+    // required: [true, 'User role is required'],
+  },
+  expiresIn: {
+    type: Date,
+  },
+});
+
+inviteSchema.index({ expiresIn: 1 }, { expireAfterSeconds: 0 });
+
+const InviteMode = mongoose.model('InviteMode', inviteSchema);
+
+module.exports = InviteMode;
