@@ -51,7 +51,6 @@ const groupSchema = new mongoose.Schema({
     type: Date,
     validate: {
       validator: function (date) {
-        // console.log('Validateioscbkscbjsdcisvcdibd', date);
         return date > Date.now();
       },
       message: 'Expiration date must be in furture!',
