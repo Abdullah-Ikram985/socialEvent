@@ -5,7 +5,6 @@ const Group = require('../models/groupModel');
 
 // Create Group
 exports.createGroup = checkAsync(async (req, res, next) => {
-  
   if (!req.body.name) return next(new AppError('Group Must have a name!', 400));
   if (!req.body.coordinates)
     return next(new AppError('Coordinates are required!', 400));
@@ -20,7 +19,6 @@ exports.createGroup = checkAsync(async (req, res, next) => {
     expireIN: new Date(Date.now() + groupExpire * 24 * 60 * 60 * 1000),
   });
 
-  console.log('----------->', group);
   res.status(200).json({
     status: 'Success',
     message: 'Group has successfully updated!',
@@ -32,7 +30,6 @@ exports.createGroup = checkAsync(async (req, res, next) => {
 
 // UPDATEING GROUP
 exports.updateGroup = checkAsync(async (req, res, next) => {
-
   const groupExpire = req.body.groupExpires || 7;
   const group = await Group.findByIdAndUpdate(
     req.params.id,
