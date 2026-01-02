@@ -10,6 +10,7 @@ const profileRouter = require('./routes/singleImgRoutes');
 const groupRouter = require('./routes/groupRoutes');
 const inviteUser = require('./routes/invitationRoutes');
 
+const firebase = require('./firebase/index');
 const app = express();
 
 app.use((req, res, next) => {
@@ -59,13 +60,30 @@ app.get('/group/:groupId', (req, res) => {
     console.log('App Store Url =>', appStoreUrl);
     return res.redirect(appStoreUrl);
   }
-  console.log('Run');
-  // Android / web fallback
   res.send(
     `<h1>Open this link on your mobile device</h1>
      <a href="${appStoreUrl}">Download App</a>`
   );
 });
+
+const sendNotification = async () => {
+  try {
+    await firebase.messaging().send({
+      token: 'device_token',
+      notification: {
+        title: 'This is title',
+        body: 'This is body',
+      },
+    });
+    console.log('👍 Notification Successfully !');
+  } catch (err) {
+    console.log('⛔ Notification failed :', err);
+  }
+};
+
+// setTimeout(() => {
+//   sendNotification();
+// }, 2000);
 
 app.get('/favicon.ico', (req, res) => res.status(204).end());
 

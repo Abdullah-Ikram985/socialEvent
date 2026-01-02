@@ -25,12 +25,23 @@ const userSchema = new mongoose.Schema({
     validate: [validator.isEmail, 'Please provide a valid email'],
   },
 
+  /*
+  email: {
+    type: String,
+    unique: true,
+    required: [true, 'Please provide your email'],
+    lowercase: true,
+    validate: [validator.isEmail, 'Please provide a valid email'],
+  },
+
   confirmEmail: {
     type: String,
     select: false,
+
     required: function () {
       return this.provider === 'local';
     },
+
     validate: {
       validator: function (el) {
         if (this.provider === 'google') return true;
@@ -39,7 +50,7 @@ const userSchema = new mongoose.Schema({
       message: 'Emails are not same',
     },
   },
-
+*/
   password: {
     type: String,
     minlength: 8,
@@ -78,6 +89,11 @@ const userSchema = new mongoose.Schema({
   categories: {
     type: [String],
   },
+
+  fcmToken: {
+    type: String,
+  },
+
   __v: {
     type: Number,
     select: false,
@@ -135,4 +151,3 @@ userSchema.methods.createPasswordResetToken = function () {
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;
-

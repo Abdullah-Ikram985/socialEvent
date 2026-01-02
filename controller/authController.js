@@ -14,6 +14,7 @@ const siginToken = (id) =>
 
 const createSendToken = (user, statusCode, res) => {
   const token = siginToken(user.id);
+
   res.status(statusCode).json({
     status: 'success',
     token,
@@ -23,7 +24,35 @@ const createSendToken = (user, statusCode, res) => {
 
 // ======= Signup =======
 exports.signup = checkAsync(async (req, res, next) => {
-  const newUser = await User.create(req.body);
+  const {
+    firstName,
+    lastName,
+    email,
+    confirmEmail,
+    password,
+    provider,
+    fcmToken,
+  } = req.body;
+
+  if (provider === 'local' && email !== confirmEmail) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Emails are not same',
+    });
+  }
+
+  if (!firstName || !lastName || !email || !confirmEmail || !password)
+    return next(new AppError('Some required keys are missing ', 404));
+
+  const newUser = await User.create({
+    firstName: firstName,
+    lastName: lastName,
+    email: email,
+    confirmEmail: confirmEmail,
+    password: password,
+    fcmToken: fcmToken,
+  });
+  console.log('New User =>', newUser);
 
   createSendToken(newUser, 201, res);
 });
