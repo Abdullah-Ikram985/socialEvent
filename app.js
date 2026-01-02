@@ -66,20 +66,20 @@ app.get('/group/:groupId', (req, res) => {
   );
 });
 
-const sendNotification = async () => {
-  try {
-    await firebase.messaging().send({
-      token: 'device_token',
-      notification: {
-        title: 'This is title',
-        body: 'This is body',
-      },
-    });
-    console.log('👍 Notification Successfully !');
-  } catch (err) {
-    console.log('⛔ Notification failed :', err);
-  }
-};
+// const sendNotification = async () => {
+//   try {
+//     await firebase.messaging().send({
+//       token: 'device_token',
+//       notification: {
+//         title: 'This is title',
+//         body: 'This is body',
+//       },
+//     });
+//     console.log('👍 Notification Successfully !');
+//   } catch (err) {
+//     console.log('⛔ Notification failed :', err);
+//   }
+// };
 
 // setTimeout(() => {
 //   sendNotification();
