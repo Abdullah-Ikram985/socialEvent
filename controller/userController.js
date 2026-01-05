@@ -1,6 +1,7 @@
 const AppError = require('../utils/appError');
 const checkAsync = require('../utils/checkAsync');
 const User = require('../models/userModel');
+const sendPushNotification = require('../utils/sendPush');
 // const Profile = require('../models/avatarModel');
 // const { userProfile } = require('./userAvatarController');
 
@@ -103,5 +104,40 @@ exports.deleteCurrentUser = checkAsync(async (req, res, next) => {
     status: 'success',
     message: 'User successfully delete.',
     date: delete_Current_User,
+  });
+});
+
+exports.set_fcm_token = checkAsync(async (req, res, next) => {
+  console.log('Current User  login ', req.user);
+
+  const fcm_token = { fcmToken: req.body.fcmToken };
+
+  if (!fcm_token) return next(new AppError('Fcm Token required!', 404));
+
+  const updateUser = await User.findByIdAndUpdate(req.user.id, fcm_token, {
+    new: true,
+  });
+  updateUser.save();
+  console.log('👍👍FCM Token  ==> ', updateUser);
+  res.status(200).json({
+    status: 'success',
+    updateUser,
+  });
+});
+
+exports.send_fcm_notifucation = checkAsync(async (req, res, next) => {
+  const userId = req.params.id;
+  console.log(userId);
+  const user = await User.findById(userId);
+
+  if (!user?.fcmToken) {
+    return res.status(400).json({ message: 'User has no FCM token' });
+  }
+
+  const fcm_Token = await sendPushNotification(user.fcmToken);
+
+  res.status(200).json({
+    status: 'success',
+    fcm_Token,
   });
 });
