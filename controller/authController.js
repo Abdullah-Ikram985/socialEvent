@@ -24,15 +24,8 @@ const createSendToken = (user, statusCode, res) => {
 
 // ======= Signup =======
 exports.signup = checkAsync(async (req, res, next) => {
-  const {
-    firstName,
-    lastName,
-    email,
-    confirmEmail,
-    password,
-    provider,
-    fcmToken,
-  } = req.body;
+  const { firstName, lastName, email, confirmEmail, password, provider } =
+    req.body;
 
   if (provider === 'local' && email !== confirmEmail) {
     return res.status(400).json({
@@ -50,7 +43,6 @@ exports.signup = checkAsync(async (req, res, next) => {
     email: email,
     confirmEmail: confirmEmail,
     password: password,
-    fcmToken: fcmToken,
   });
   console.log('New User =>', newUser);
 
@@ -70,6 +62,7 @@ exports.login = checkAsync(async (req, res, next) => {
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError('Please enter correct password', 401));
   }
+
   createSendToken(user, 200, res);
 });
 
@@ -197,6 +190,7 @@ exports.resetPassword = checkAsync(async (req, res, next) => {
 });
 
 // ====== Update Password ========
+
 exports.updatePassword = checkAsync(async (req, res, next) => {
   console.log('⛔⛔⛔⛔⛔⛔⛔⛔⛔', req.user);
   // 1)Get user form collection
