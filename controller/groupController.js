@@ -23,21 +23,16 @@ exports.createGroup = checkAsync(async (req, res, next) => {
     expireIN: new Date(Date.now() + groupExpire * 24 * 60 * 60 * 1000),
   });
 
-  // Sending push notification
-  // This below Api take userId and then send notification if user has FCM token
-  // router.get('/send-fcm-noti/:id', authController.protect,userController.send_fcm_notifucation);
-
-  //this code work best for those user if they have FCMtoken field. But if user does not have fcm token then the code send error and group will not create.
   try {
     const user = await User.findById(req.user._id);
     console.log('User >>>>>>> ', user);
     if (user?.fcmToken) {
       sendPushNotification(user.fcmToken);
     } else {
-      console.log('User has no FCM token, skipping notification.');
+      console.log('User has no FCM token.');
     }
   } catch (err) {
-    console.log('Failed to send push notification:', err.message);
+    console.log('Error to send notification:', err.message);
   }
 
   res.status(200).json({
