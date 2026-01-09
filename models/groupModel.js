@@ -66,6 +66,6 @@ groupSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
-// sckjsdcjsdvbd
+
 const Group = mongoose.model('Group', groupSchema);
 module.exports = Group;

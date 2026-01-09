@@ -25,7 +25,7 @@ exports.createGroup = checkAsync(async (req, res, next) => {
 
   // Sending push notification
   // This below Api take userId and then send notification if user has FCM token
-  // router.get('/send-fcm-noti/:id',authController.protect,userController.send_fcm_notifucation);
+  // router.get('/send-fcm-noti/:id', authController.protect,userController.send_fcm_notifucation);
 
   //this code work best for those user if they have FCMtoken field. But if user does not have fcm token then the code send error and group will not create.
   const userId = req.user._id;
