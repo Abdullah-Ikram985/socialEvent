@@ -34,6 +34,7 @@ const groupSchema = new mongoose.Schema({
       required: true,
     },
   },
+  address: { type: String },
   groupMembers: [
     {
       type: mongoose.Schema.Types.ObjectId,

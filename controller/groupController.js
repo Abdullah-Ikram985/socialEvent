@@ -8,6 +8,8 @@ exports.createGroup = checkAsync(async (req, res, next) => {
   if (!req.body.name) return next(new AppError('Group Must have a name!', 400));
   if (!req.body.coordinates)
     return next(new AppError('Coordinates are required!', 400));
+  if (!req.body.address) return next(new AppError('Address missing!', 400));
+
   const groupExpire = req.body.groupExpires || 7;
 
   const group = await Group.create({
@@ -16,12 +18,12 @@ exports.createGroup = checkAsync(async (req, res, next) => {
     description: req.body.description,
     categories: req.body.categories,
     coordinates: req.body.coordinates,
+    address: req.body.address,
     expireIN: new Date(Date.now() + groupExpire * 24 * 60 * 60 * 1000),
   });
 
   res.status(200).json({
     status: 'Success',
-    message: 'Group has successfully updated!',
     data: {
       group,
     },
@@ -46,6 +48,7 @@ exports.updateGroup = checkAsync(async (req, res, next) => {
   );
   res.status(200).json({
     status: 'success',
+    message: 'Group has successfully updated!',
     data: {
       group,
     },
