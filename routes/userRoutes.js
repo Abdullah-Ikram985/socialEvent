@@ -7,21 +7,6 @@ const authController = require('../controller/authController.js');
 
 const router = express.Router();
 
-// router.post('/test-push', async (req, res) => {
-//   //   const { userId } = req.body;
-
-//   //   const user = await User.findById(userId);
-//   //   if (!user?.fcmToken) {
-//   // return res.status(400).json({ message: "User has no FCM token" });
-//   //   }
-
-//   await sendPushNotification(
-//     'dWcBkDu5vk0yuAS86MHbe3:APA91bFyl76U0Mo_YY6lPTCjLag3qoTUbxwJ2uO8iwXErBLM5121KFxhTL0DzCwXJRa4wAKLkLxPdpXNXnj-7vgOMUeMpHBLAgx379kECNa6JN2iU55riYw'
-//   );
-
-//   res.json({ success: true });
-// });
-
 router.post('/signup', authController.signup);
 router.post('/login', authController.login);
 router.post('/forgotPassword', authController.forgotPassword);
@@ -37,6 +22,7 @@ router.post(
   authController.protect,
   userController.set_fcm_token
 );
+
 router.get(
   '/send-fcm-noti/:id',
   authController.protect,

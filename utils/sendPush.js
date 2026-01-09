@@ -15,7 +15,7 @@ async function sendPushNotification(token) {
       },
     },
   };
-
+  
   try {
     const response = await firebase.messaging().send(message);
     console.log('Notification sent:', response);

@@ -66,25 +66,6 @@ app.get('/group/:groupId', (req, res) => {
   );
 });
 
-// const sendNotification = async () => {
-//   try {
-//     await firebase.messaging().send({
-//       token: 'device_token',
-//       notification: {
-//         title: 'This is title',
-//         body: 'This is body',
-//       },
-//     });
-//     console.log('👍 Notification Successfully !');
-//   } catch (err) {
-//     console.log('⛔ Notification failed :', err);
-//   }
-// };
-
-// setTimeout(() => {
-//   sendNotification();
-// }, 2000);
-
 app.get('/favicon.ico', (req, res) => res.status(204).end());
 
 app.all('*', (req, res, next) => {
