@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
-const { default: slugify } = require('slugify');
-const validator = require('validator');
+const mongoose = require("mongoose");
+const { default: slugify } = require("slugify");
+const validator = require("validator");
 
 const groupSchema = new mongoose.Schema({
   photo: String,
@@ -34,11 +34,12 @@ const groupSchema = new mongoose.Schema({
       required: true,
     },
   },
+  address: { type: String },
   groupMembers: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      unique: [true, 'User Already added in group!'],
+      ref: "User",
+      default: [],
     },
   ],
 
@@ -53,7 +54,7 @@ const groupSchema = new mongoose.Schema({
       validator: function (date) {
         return date > Date.now();
       },
-      message: 'Expiration date must be in furture!',
+      message: "Expiration date must be in furture!",
     },
   },
   slug: String,
@@ -61,10 +62,10 @@ const groupSchema = new mongoose.Schema({
 
 groupSchema.index({ expireIN: 1 }, { expireAfterSeconds: 0 });
 
-groupSchema.pre('save', function (next) {
+groupSchema.pre("save", function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
 
-const Group = mongoose.model('Group', groupSchema);
+const Group = mongoose.model("Group", groupSchema);
 module.exports = Group;

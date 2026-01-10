@@ -6,10 +6,9 @@ const sendEmail = async (options) => {
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: Number(process.env.EMAIL_PORT),
-    // secure: false,
     auth: {
       user: process.env.EMAIL_USERNAME,
-      pass: process.env.EMAIL_PASSWORD, // ✅ Fixed
+      pass: process.env.EMAIL_PASSWORD, 
     },
     tls: {
       rejectUnauthorized: false,
@@ -17,7 +16,7 @@ const sendEmail = async (options) => {
   });
   // Define the email options
   const mailOptions = {
-    from: "abdullahIkram@gmail.com",  // FIXED
+    from: "abdullahIkram@gmail.com", 
     to: options.email,
     subject: options.subject,
     text: options.message,
