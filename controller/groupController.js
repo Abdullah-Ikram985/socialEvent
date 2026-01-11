@@ -71,7 +71,7 @@ exports.updateGroup = checkAsync(async (req, res, next) => {
 
 // Get Group By ID
 exports.getGroupById = checkAsync(async (req, res, next) => {
-  const group = await Group.findById(req.params.id);
+  const group = await Group.findById(req.params.id).populate('groupMembers');
 
   if (!group)
     return next(new AppError('Group belong with this id does not exist!', 404));

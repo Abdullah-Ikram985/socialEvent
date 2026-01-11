@@ -3,7 +3,8 @@ const checkAsync = require('../utils/checkAsync');
 const AppError = require('../utils/appError');
 const InviteMode = require('../models/inviteModel');
 const Group = require('../models/groupModel');
-
+const User = require('../models/userModel');
+const sendPushNotification = require('../utils/sendPush');
 // SEND INVITATION
 exports.send_invitation = checkAsync(async (req, res, next) => {
   if (!req.body.groupId) return next(new AppError('Group ID is  required!'));
@@ -16,6 +17,28 @@ exports.send_invitation = checkAsync(async (req, res, next) => {
     userId: req.body.userId,
     expiresIn: new Date(Date.now() + inviteExpire * 24 * 60 * 60 * 1000),
   });
+
+  try {
+    const user = await User.findById(req.body.userId);
+    const group = await Group.findById(req.body.groupId);
+
+    if (!user) console.log('User not found.');
+    if (!group) console.log('Group not found.');
+    console.log('Group ==>', group);
+    await Group.findByIdAndUpdate(
+      req.body.groupId,
+      { $addToSet: { groupMembers: req.body.userId } },
+      { new: true }
+    );
+
+    // group.save();
+    if (user.fcmToken && group.name) {
+      sendPushNotification(user.fcmToken, group.name, group.description);
+    }
+    console.log(user);
+  } catch (err) {
+    console.log(err);
+  }
 
   res.status(201).json({
     status: 'success',
