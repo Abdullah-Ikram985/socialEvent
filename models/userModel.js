@@ -24,33 +24,8 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     validate: [validator.isEmail, 'Please provide a valid email'],
   },
+  inviteStatus: String,
 
-  /*
-  email: {
-    type: String,
-    unique: true,
-    required: [true, 'Please provide your email'],
-    lowercase: true,
-    validate: [validator.isEmail, 'Please provide a valid email'],
-  },
-
-  confirmEmail: {
-    type: String,
-    select: false,
-
-    required: function () {
-      return this.provider === 'local';
-    },
-
-    validate: {
-      validator: function (el) {
-        if (this.provider === 'google') return true;
-        return el === this.email;
-      },
-      message: 'Emails are not same',
-    },
-  },
-*/
   password: {
     type: String,
     minlength: 8,
@@ -92,6 +67,10 @@ const userSchema = new mongoose.Schema({
 
   fcmToken: {
     type: String,
+  },
+  invitation: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'inviteModel',
   },
 
   __v: {

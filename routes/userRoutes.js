@@ -1,6 +1,6 @@
-const express = require("express");
-const userController = require("../controller/userController.js");
-const authController = require("../controller/authController.js");
+const express = require('express');
+const userController = require('../controller/userController.js');
+const authController = require('../controller/authController.js');
 // const sendPushNotification = require('../utils/sendPush.js');
 // const userAvatar = require('../controller/userAvatarController.js');
 // const { auth } = require('google-auth-library');
@@ -22,49 +22,56 @@ const router = express.Router();
 //   res.json({ success: true });
 // });
 
-router.post("/signup", authController.signup);
-router.post("/login", authController.login);
-router.post("/forgotPassword", authController.forgotPassword);
-router.patch("/resetPassword/:token", authController.resetPassword);
+router.post('/signup', authController.signup);
+router.post('/login', authController.login);
+router.post('/forgotPassword', authController.forgotPassword);
+router.patch('/resetPassword/:token', authController.resetPassword);
 router.patch(
-  "/updateMyPassword",
+  '/updateMyPassword',
   authController.protect,
   authController.updatePassword
 );
 
 router.post(
-  "/sendFcmToken",
+  '/sendFcmToken',
   authController.protect,
   userController.set_fcm_token
 );
 
 router.get(
-  "/send-fcm-noti/:id",
+  '/send-fcm-noti/:id',
   authController.protect,
   userController.send_fcm_notifucation
 );
 // CREATE NEW USER
-router.post("/create", userController.createUser);
+router.post('/create', userController.createUser);
+
 // UPDATE CURRENT LOGIN USER (BASED ON TOKEN)
 router.post(
-  "/updateUser",
+  '/updateUser',
   authController.protect,
   userController.updateCurrentUser
 );
 
-router.post("/checkEmail", userController.getUserBasedOnEmail);
+router.post('/checkEmail', userController.getUserBasedOnEmail);
+// GET USER BASED ON ID
+router.get(
+  '/getUserById/:id',
+  authController.protect,
+  userController.getUserByID
+);
 // GET ALL USERS
-router.get("/allUsers", authController.protect, userController.getAllUsers);
+router.get('/allUsers', authController.protect, userController.getAllUsers);
 // GET CURRENT LOGIN USER (BASED ON TOKEN)
 router.get(
-  "/getUser",
+  '/getUser',
   authController.protect,
   userController.getUserBasedOnToken
 );
 
 // DELETE CURRENT LOGIN USER (BASED ON TOKEN)
 router.delete(
-  "/deleteUserAccount",
+  '/deleteUserAccount',
   authController.protect,
   userController.deleteCurrentUser
 );

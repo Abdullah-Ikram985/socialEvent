@@ -28,6 +28,6 @@ const inviteSchema = new mongoose.Schema({
 
 inviteSchema.index({ expiresIn: 1 }, { expireAfterSeconds: 0 });
 
-const InviteMode = mongoose.model('InviteMode', inviteSchema);
+const inviteModel = mongoose.model('inviteModel', inviteSchema);
 
-module.exports = InviteMode;
+module.exports = inviteModel;

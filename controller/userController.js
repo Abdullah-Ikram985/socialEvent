@@ -7,7 +7,7 @@ const sendPushNotification = require('../utils/sendPush');
 
 exports.createUser = checkAsync(async (req, res, next) => {
   const user = await User.create(req.body);
-  console.log('User', user);
+  // console.log('User', user);
   res.status(201).json({
     status: 'success',
     message: 'Successfully created',
@@ -72,7 +72,19 @@ exports.getUserBasedOnEmail = checkAsync(async (req, res, next) => {
     user,
   });
 });
+// GET USER BY ID
+exports.getUserByID = checkAsync(async (req, res, next) => {
+  if (!req.params.id) return next(new AppError('User Id is missing', 404));
 
+  const user = await User.findById(req.params.id);
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user,
+    },
+  });
+});
 // GET ALL USERS
 exports.getAllUsers = checkAsync(async (req, res, next) => {
   const users = await User.find();
@@ -108,7 +120,7 @@ exports.deleteCurrentUser = checkAsync(async (req, res, next) => {
 });
 
 exports.set_fcm_token = checkAsync(async (req, res, next) => {
-  console.log('Current User  login ', req.user);
+  // console.log('Current User  login ', req.user);
 
   const fcm_token = { fcmToken: req.body.fcmToken };
 
@@ -117,8 +129,8 @@ exports.set_fcm_token = checkAsync(async (req, res, next) => {
   const updateUser = await User.findByIdAndUpdate(req.user.id, fcm_token, {
     new: true,
   });
-  updateUser.save();
-  console.log('👍👍FCM Token  ==> ', updateUser);
+  // updateUser.save();
+  // console.log('👍👍FCM Token  ==> ', updateUser);
   res.status(200).json({
     status: 'success',
     updateUser,
@@ -127,7 +139,7 @@ exports.set_fcm_token = checkAsync(async (req, res, next) => {
 
 exports.send_fcm_notifucation = checkAsync(async (req, res, next) => {
   const userId = req.params.id;
-  console.log(userId);
+  // console.log(userId);
   const user = await User.findById(userId);
 
   if (!user?.fcmToken) {
