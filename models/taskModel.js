@@ -22,12 +22,20 @@ const taskSchema = new mongoose.Schema({
       required: true,
     },
   },
+  address: { type: String },
   taskList: {
     type: String,
   },
   categories: {
     type: Array,
   },
+  taskMembers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: [],
+    },
+  ],
   groupId: String,
 });
 

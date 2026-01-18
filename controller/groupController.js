@@ -24,18 +24,6 @@ exports.createGroup = checkAsync(async (req, res, next) => {
     expireIN: new Date(Date.now() + groupExpire * 24 * 60 * 60 * 1000),
   });
 
-  // try {
-  //   const user = await User.findById(req.user._id);
-  //   console.log('User >>>>>>> ', user);
-  //   if (user?.fcmToken) {
-  //     sendPushNotification(user.fcmToken);
-  //   } else {
-  //     console.log('User has no FCM token.');
-  //   }
-  // } catch (err) {
-  //   console.log('Error to send notification:', err.message);
-  // }
-
   res.status(200).json({
     status: 'Success',
     message: 'Group has successfully updated!',
@@ -59,7 +47,7 @@ exports.updateGroup = checkAsync(async (req, res, next) => {
     },
     {
       new: true,
-    }
+    },
   );
   res.status(200).json({
     status: 'success',
@@ -73,13 +61,13 @@ exports.updateGroup = checkAsync(async (req, res, next) => {
 
 // Get Group By ID
 exports.getGroupById = checkAsync(async (req, res, next) => {
-  const group = await Group.findById(req.params.id).populate({
-    path: 'groupMembers',
-    select: 'firstName lastName email  inviteStatus image',
-  });
 
-  console.log('Group Members =>', group);
-
+  const group = await Group.findById(req.params.id)
+    .populate({
+      path: 'groupMembers',
+      select: 'firstName lastName email  inviteStatus image',
+    })
+  
   if (!group)
     return next(new AppError('Group belong with this id does not exist!', 404));
 
