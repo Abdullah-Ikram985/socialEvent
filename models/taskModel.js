@@ -29,13 +29,15 @@ const taskSchema = new mongoose.Schema({
   categories: {
     type: Array,
   },
+
   taskMembers: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      default: [],
+      _id: false,
+      user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+      isTaskDone: { type: Boolean, default: false },
     },
   ],
+
   groupId: String,
 });
 

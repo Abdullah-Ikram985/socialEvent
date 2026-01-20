@@ -72,7 +72,6 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'inviteModel',
   },
-
   __v: {
     type: Number,
     select: false,
@@ -96,7 +95,7 @@ userSchema.pre('save', function (next) {
 
 userSchema.methods.correctPassword = async function (
   candidatePassword,
-  userPassword
+  userPassword,
 ) {
   console.log('⭐', candidatePassword, userPassword);
   const result = await bcrypt.compare(candidatePassword, userPassword);
@@ -108,7 +107,7 @@ userSchema.methods.changePasswordAfter = function (JwtIssuesTime) {
   if (this.passwordChangeAt) {
     const changePasswordTime = parseInt(
       this.passwordChangeAt.getTime() / 1000,
-      10
+      10,
     );
     return JwtIssuesTime < changePasswordTime;
   }
