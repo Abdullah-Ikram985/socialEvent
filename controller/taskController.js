@@ -48,7 +48,7 @@ exports.createTask = checkAsync(async (req, res, next) => {
 exports.get_all_tasks_based_groupId = checkAsync(async (req, res, next) => {
   console.log(req.params.id);
 
-  const tasks = await Task.findOne({ groupId: req.params.id }).populate({
+  const tasks = await Task.find({ groupId: req.params.id }).populate({
     path: 'taskMembers',
     select:'firstName lastName email image'
   });
