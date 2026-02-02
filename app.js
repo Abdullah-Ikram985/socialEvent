@@ -10,6 +10,7 @@ const profileRouter = require('./routes/singleImgRoutes');
 const groupRouter = require('./routes/groupRoutes');
 const inviteRouter = require('./routes/invitationRoutes');
 const taskRouter = require('./routes/taskRoutes');
+const messageRouter = require('./routes/messageRroutes');
 const firebase = require('./firebase/index');
 const app = express();
 
@@ -33,9 +34,8 @@ app.get('/.well-known/apple-app-site-association', async (req, res) => {
     'https://knickknacky-marvin-unmarvelously.ngrok-free.dev/.well-known/apple-app-site-association',
     {
       headers: { 'ngrok-skip-browser-warning': '1' },
-    }
+    },
   );
-
   const text = await response.text();
   res.setHeader('Content-Type', 'application/json');
   res.send(text);
@@ -50,11 +50,11 @@ app.use('/api/v1/img', profileRouter);
 app.use('/api/v1/group', groupRouter);
 app.use('/api/v1/invitation', inviteRouter);
 app.use('/api/v1/task', taskRouter);
+app.use('/api/v1/groups', messageRouter);
 
 app.get('/group/:groupId', (req, res) => {
   const userAgent = req.headers['user-agent'];
   const appStoreUrl = 'https://apps.apple.com/app/id6756718235'; // your Apple App Store ID
-
   console.log('Running 1');
   // iOS device → redirect to App Store if app not installed
   if (userAgent) {
@@ -63,7 +63,7 @@ app.get('/group/:groupId', (req, res) => {
   }
   res.send(
     `<h1>Open this link on your mobile device</h1>
-     <a href="${appStoreUrl}">Download App</a>`
+     <a href="${appStoreUrl}">Download App</a>`,
   );
 });
 
