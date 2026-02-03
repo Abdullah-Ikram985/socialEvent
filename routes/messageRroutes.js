@@ -8,7 +8,5 @@ const sendMessageSchema = require('../validators/chatValidator.js');
 const router = express.Router();
 
 router.use(authController.protect);
-router
-  .route('/:groupId/messages')
-  .get(messageController.getGroupMessages); // Remove redundant authMiddleware (already protected via router.use); add handler
+router.route('/:groupId/messages').get(messageController.getGroupMessages); 
 module.exports = router;

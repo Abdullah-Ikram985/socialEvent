@@ -42,7 +42,10 @@ const groupSchema = new mongoose.Schema({
       default: [],
     },
   ],
-
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
   createdAt: {
     type: Date,
     default: () => Date.now(),

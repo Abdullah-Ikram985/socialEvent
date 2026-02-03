@@ -10,7 +10,7 @@ const saveGroupMessage = async ({ groupID, senderID, content }) => {
 
   return await MessageModel.findById(message._id).populate(
     'sender',
-    'name email',
+    'firstName email image ',
   );
 };
 

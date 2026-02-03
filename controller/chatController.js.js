@@ -4,9 +4,9 @@ const { saveGroupMessage } = require('../utils/mesageHelper');
 const Group = require('../models/groupModel');
 
 exports.sendGroupMessage = checkAsync(async (req, res, next) => {
-  const { groupID } = req.params;
+  const { groupId } = req.params;
   const { content } = req.body;
-  const group = await Group.findById(groupID);
+  const group = await Group.findById(groupId);
   if (!group) {
     return res.status(404).json({
       success: false,
@@ -19,6 +19,7 @@ exports.sendGroupMessage = checkAsync(async (req, res, next) => {
     sender: req.user.id,
     content,
   });
+  console.log(message);
 
   const populatedMessage = await MessageModel.findById(message._id).populate(
     'sender',
@@ -46,7 +47,7 @@ exports.getGroupMessages = async (req, res) => {
   try {
     const { groupId } = req.params;
     const userId = req.user.id; // Assuming you have auth middleware setting req.user (from JWT)
-    console.log("just check call",groupId,userId)
+    console.log('just check call', groupId, userId);
 
     const group = await Group.findById(groupId);
     if (!group) {
@@ -55,15 +56,18 @@ exports.getGroupMessages = async (req, res) => {
 
     // Security: Ensure user is a member
     if (!group.groupMembers.includes(userId)) {
-      return res.status(403).json({ message: 'You are not a member of this group' });
+      return res
+        .status(403)
+        .json({ message: 'You are not a member of this group' });
     }
-    console.log("groupIdgroupIdgroupId",groupId,'userId',userId)
+    console.log('groupIdgroupIdgroupId', groupId, 'userId', userId);
 
     // Fetch messages, sorted by createdAt (assuming your schema has timestamps)
     const messages = await MessageModel.find({ group: groupId })
       .sort({ createdAt: 1 }) // Oldest first
-      .populate('sender', 'name email'); // Populate sender info
-
+      .populate('sender', 'firstName email image'); // Populate sender info
+   console.log()
+    console.log('➡️➡️➡️', messages);
     res.status(200).json({ messages });
   } catch (err) {
     console.error('Get messages error:', err);
