@@ -1,6 +1,6 @@
 const MessageModel = require('../models/messageModel');
 
-exports.saveGroupMessage = async ({ groupID, senderID, content }) => {
+const saveGroupMessage = async ({ groupID, senderID, content }) => {
   const message = await MessageModel.create({
     group: groupID,
     sender: senderID,
@@ -14,4 +14,4 @@ exports.saveGroupMessage = async ({ groupID, senderID, content }) => {
   );
 };
 
-// module.exports = saveGroupMessage;
+module.exports = saveGroupMessage;

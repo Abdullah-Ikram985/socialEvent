@@ -39,6 +39,10 @@ const groupChatHandler = (io) => {
         const group = await Group.findById(groupID);
         if (!group) return socket.emit('error', { message: 'Group not found' });
 
+        console.log("groupgroupgroupgroupgroup",socket.userId)
+
+
+
         const message = await saveGroupMessage({
           groupID,
           senderID: socket.userId,
@@ -47,6 +51,7 @@ const groupChatHandler = (io) => {
 
         io.to(`group:${groupID}`).emit('group:message:received', message);
       } catch (err) {
+        console.error('Send message error:', err); // Add detailed log
         socket.emit('error', { message: 'Failed to send group message' });
       }
     });

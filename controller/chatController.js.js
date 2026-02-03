@@ -41,3 +41,32 @@ exports.sendGroupMessage = checkAsync(async (req, res, next) => {
     data: populatedMessage,
   });
 });
+
+exports.getGroupMessages = async (req, res) => {
+  try {
+    const { groupId } = req.params;
+    const userId = req.user.id; // Assuming you have auth middleware setting req.user (from JWT)
+    console.log("just check call",groupId,userId)
+
+    const group = await Group.findById(groupId);
+    if (!group) {
+      return res.status(404).json({ message: 'Group not found' });
+    }
+
+    // Security: Ensure user is a member
+    if (!group.groupMembers.includes(userId)) {
+      return res.status(403).json({ message: 'You are not a member of this group' });
+    }
+    console.log("groupIdgroupIdgroupId",groupId,'userId',userId)
+
+    // Fetch messages, sorted by createdAt (assuming your schema has timestamps)
+    const messages = await MessageModel.find({ group: groupId })
+      .sort({ createdAt: 1 }) // Oldest first
+      .populate('sender', 'name email'); // Populate sender info
+
+    res.status(200).json({ messages });
+  } catch (err) {
+    console.error('Get messages error:', err);
+    res.status(500).json({ message: 'Failed to fetch messages' });
+  }
+};

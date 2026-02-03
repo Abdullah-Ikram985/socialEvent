@@ -9,7 +9,6 @@ const router = express.Router();
 
 router.use(authController.protect);
 router
-  .route('/:groupID/messages')
-  .post(validate(sendMessageSchema), messageController.sendGroupMessage);
-
+  .route('/:groupId/messages')
+  .get(messageController.getGroupMessages); // Remove redundant authMiddleware (already protected via router.use); add handler
 module.exports = router;
