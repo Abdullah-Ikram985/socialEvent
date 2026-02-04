@@ -5,17 +5,23 @@ const inviteController = require('../controller/invitationController');
 const router = express.Router();
 
 router.post(
-  '/send-invitation',
+  '/send_invitation',
   authController.protect,
-  inviteController.send_invitation
+  inviteController.send_invitation,
 );
-router.post('/invite-status/:id', inviteController.invite_accept_or_reject);
+router.post('/invite_status/:id', inviteController.invite_accept_or_reject);
+
+// Get all invitation based on user Id
+router.get(
+  '/get_invitation_userid/:id',
+  authController.protect,
+  inviteController.get_invite_based_user_id,
+);
 
 router.get(
-  '/get-invitation-userid/:id',
+  '/get_invitation_groupId/:groupId',
   authController.protect,
-  inviteController.get_invite_based_user_id
+  inviteController.get_invite_based_group_id,
 );
-
 
 module.exports = router;

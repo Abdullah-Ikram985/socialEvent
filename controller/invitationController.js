@@ -29,7 +29,7 @@ exports.send_invitation = checkAsync(async (req, res, next) => {
     await Group.findByIdAndUpdate(
       req.body.groupId,
       { $addToSet: { groupMembers: req.body.userId } },
-      { new: true }
+      { new: true },
     );
 
     const updateUser = await User.findByIdAndUpdate(
@@ -37,7 +37,7 @@ exports.send_invitation = checkAsync(async (req, res, next) => {
       {
         $set: { inviteStatus: invitation.inviteStatus },
       },
-      { new: true }
+      { new: true },
     );
 
     // updateUser.save();
@@ -102,7 +102,7 @@ exports.invite_accept_or_reject = checkAsync(async (req, res, next) => {
       {
         status: 'rejecting',
       },
-      { new: true }
+      { new: true },
     );
     await invitation.save();
     console.log('INVITATION REJECTING  ===>  ', invitation);
@@ -122,7 +122,7 @@ exports.invite_accept_or_reject = checkAsync(async (req, res, next) => {
     {
       new: true,
       runValidators: true,
-    }
+    },
   );
 
   res.status(200).json({
@@ -131,6 +131,7 @@ exports.invite_accept_or_reject = checkAsync(async (req, res, next) => {
   });
 });
 
+// CHECK INVITATION BASED ON USER ID
 exports.get_invite_based_user_id = checkAsync(async (req, res, next) => {
   // console.log('Get Invitation Id ==>', req.params.id);
 
@@ -141,12 +142,30 @@ exports.get_invite_based_user_id = checkAsync(async (req, res, next) => {
   // console.log(invitation);
   res.status(200).json({
     status: 'success',
+    result: invitation.length,
     data: {
       invitation,
     },
   });
 });
 
+// CHECK INVITATION BASED ON GROUP ID
+exports.get_invite_based_group_id = checkAsync(async (req, res, next) => {
+  console.log(req.params.groupId);
+  const invitation = await Invitation.find({ groupId: req.params.groupId });
+  if (!invitation)
+    return next(
+      new AppError('Invitation belong this group id does not found!', 404),
+    );
+
+  res.status(200).json({
+    status: 'success',
+    result: invitation.length,
+    data: {
+      invitation,
+    },
+  });
+});
 // exports.checkInvitation = checkAsync(async (req, res, next) => {
 //   console.log('Invitation ====>', req.invitation);
 //   // const invi = await Invitation.findOne({
