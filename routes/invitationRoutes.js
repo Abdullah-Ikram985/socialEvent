@@ -11,7 +11,7 @@ router.post(
   inviteController.send_invitation,
 );
 // updating status of invitation
-router.post('/invite_status/:id', inviteController.invite_accept_or_reject);
+router.post('/invite_status', inviteController.invite_accept_or_reject);
 
 // Get all invitation based on user Id
 router.get(

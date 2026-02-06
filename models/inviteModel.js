@@ -17,7 +17,7 @@ const inviteSchema = new mongoose.Schema({
     default: 'invited',
 
     enum: {
-      values: ['invited', 'accepting', 'rejecting'],
+      values: ['invited', 'accepted', 'rejected'],
       message: '{VALUE} is not a valid invite status!.',
     },
   },
