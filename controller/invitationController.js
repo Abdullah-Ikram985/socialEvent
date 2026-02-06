@@ -11,6 +11,9 @@ exports.send_invitation = checkAsync(async (req, res, next) => {
   if (!req.body.groupId) return next(new AppError('Group ID is  required!'));
   if (!req.body.userId) return next(new AppError('User ID is  required!'));
 
+  if (req.body.userId === req.user._id)
+    return next(new AppError('You can not invite itself!', 404));
+  
   const inviteExpire = 5;
 
   const invitation = await Invitation.create({
@@ -40,18 +43,8 @@ exports.send_invitation = checkAsync(async (req, res, next) => {
       { new: true },
     );
 
-    // updateUser.save();
     console.log('👍👍👍👍 update user ', updateUser);
 
-    // const updateUser = await User.findByIdAndUpdate(
-    //   req.body.userId,
-    //   {
-    //     $push: { invitations: invitation },
-    //   },
-    //   { new: true }
-    // );
-
-    // group.save();
     if (user.fcmToken && group.name) {
       sendPushNotification(user.fcmToken, group.name, group.description);
     }
@@ -76,9 +69,6 @@ exports.invite_accept_or_reject = checkAsync(async (req, res, next) => {
     .populate('groupId', 'name coordinates description');
   if (!invitation)
     return next(new AppError('Invitation belong this Id does not found!', 404));
-
-  // console.log('INVITATION ==> ', invitation);
-  // console.log('Body  ==> ', req.body.status);
 
   if (req.body.status === 'accepting') {
     // console.log(invitation);
@@ -152,6 +142,7 @@ exports.get_invite_based_user_id = checkAsync(async (req, res, next) => {
 // CHECK INVITATION BASED ON GROUP ID
 exports.get_invite_based_group_id = checkAsync(async (req, res, next) => {
   console.log(req.params.groupId);
+
   const invitation = await Invitation.find({ groupId: req.params.groupId });
   if (!invitation)
     return next(
