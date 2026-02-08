@@ -101,7 +101,6 @@ exports.invite_accept_or_reject = checkAsync(async (req, res, next) => {
 
     invitation.inviteStatus = 'accepted';
     await invitation.save();
-
   }
 
   // REJECT INVITE
@@ -143,7 +142,7 @@ exports.get_invite_based_user_id = checkAsync(async (req, res, next) => {
 exports.get_invite_based_group_id = checkAsync(async (req, res, next) => {
   console.log(req.params.groupId);
 
-  const invitation = await Invitation.findOne({ groupId: req.params.groupId });
+  const invitation = await Invitation.find({ groupId: req.params.groupId });
   console.log(invitation);
   if (!invitation)
     return next(
@@ -152,10 +151,9 @@ exports.get_invite_based_group_id = checkAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    // result: invitation,
+    result: invitation,
     data: {
       invitation,
     },
   });
 });
-

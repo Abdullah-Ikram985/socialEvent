@@ -3,6 +3,8 @@ const AppError = require('../utils/appError');
 const Group = require('../models/groupModel');
 const User = require('../models/userModel');
 const Invitation = require('../models/inviteModel');
+const TaskModel = require('../models/taskModel');
+const MessageModel = require('../models/messageModel');
 const sendPushNotification = require('../utils/sendPush');
 
 // Create Group
@@ -110,5 +112,55 @@ exports.get_all_groups_user_invite = checkAsync(async (req, res, next) => {
     data: {
       groups,
     },
+  });
+});
+
+// Delete All Invitation based on Group Id
+
+// 1:- Delete all invitation based group id ✔️
+// 2:- Update all user (in groupMembers array) ... remove inviteStatus field ✔️
+// 3:- Delet  group  from document ✔️
+// 4:- Delete all images of group
+// 5:- Delete all task from mongo db based on group id ✔️
+// 6:- Delete all messages based group id ✔️
+
+exports.delete_group= checkAsync(async (req, res, next) => {
+  const groupId = req.params.groupId;
+
+  console.log('Group Id ===> ', groupId);
+  // Finding group
+  const group = await Group.findById(groupId);
+  if (!group) {
+    return next(new AppError('Group not found', 404));
+  }
+  console.log('⭐ Group  ==>', group);
+
+  // Delete all invitation based group id
+  const delete_invite = await Invitation.deleteMany({ groupId });
+  console.log('Deleted Invitations ---', delete_invite.deletedCount);
+
+  // Update all user (in groupMembers array) ... remove inviteStatus field ✔️
+  await User.updateMany(
+    { _id: { $in: group.groupMembers } },
+    {
+      $unset: { inviteStatus: '' },
+    },
+  );
+  // Delet  group  from document ✔️
+  await Group.findByIdAndDelete(group._id);
+
+  //  Delete all task from mongo db based on group id ✔️
+  const tasks_docs = await TaskModel.deleteMany({ groupId });
+  console.log('Deleted Tasks ---', tasks_docs.deletedCount);
+
+  // Delete all messages based group id
+  const delete_messages = await MessageModel.deleteMany({
+    group: groupId,
+  });
+  console.log('Deleted messages ---', tasks_docs.deletedCount);
+
+  res.status(204).json({
+    status: 'success',
+    message: 'Successfully delete',
   });
 });

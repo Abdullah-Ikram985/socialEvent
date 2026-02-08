@@ -27,4 +27,9 @@ router.get(
   groupController.get_all_groups_user_invite,
 );
 
+router.delete(
+  '/groups/:groupId',
+  authController.protect,
+  groupController.delete_group,
+);
 module.exports = router;
